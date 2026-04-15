@@ -52,6 +52,24 @@ Open-Path $psHistory
 # ==========================================
 # Additional Useful Checks
 # ==========================================
+function Log-R6Users {
+    Show-Progress "Logging R6 Users" 33
+    $user = $env:UserName
+    $oneDrive = Get-OneDrivePath
+    $paths = @("C:\Users\$user\Documents\My Games\Rainbow Six - Siege","$oneDrive\Documents\My Games\Rainbow Six - Siege")
+    Write-Log "`n-----------------"
+    Write-Log "R6 Usernames:"
+    foreach ($p in $paths) {
+        if (Test-Path $p) {
+            Get-ChildItem $p -Directory | ForEach-Object {
+                Write-Log $_.Name
+                Start-Process "https://stats.cc/siege/$($_.Name)"
+                Start-Sleep 0.5
+            }
+        }
+    }
+}
+
 
 # Temp files
 Open-Path "$env:TEMP"
