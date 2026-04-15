@@ -1,0 +1,104 @@
+# ==========================================
+# halfskid.net
+# Credits: Lain.wtf, ostooo
+# ==========================================
+
+Write-Host "Checking sys" -ForegroundColor Cyan
+
+# --- Function: Open URL ---
+function Open-URL($url) {
+    Write-Host "Opening $url" -ForegroundColor Yellow
+    Start-Process $url
+}
+
+# --- Function: Open Path ---
+function Open-Path($path) {
+    if (Test-Path $path) {
+        Write-Host "Opening $path" -ForegroundColor Yellow
+        Start-Process $path
+    } else {
+        Write-Host "Path not found: $path" -ForegroundColor Red
+    }
+}
+
+# --- Function: Open Registry ---
+function Open-Reg($regPath) {
+    Write-Host "Opening Registry: $regPath" -ForegroundColor Yellow
+    Start-Process "regedit.exe"
+    Start-Sleep -Seconds 2
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Applets\Regedit" -Name "LastKey" -Value $regPath
+}
+
+# ==========================================
+# USB Storage Registry Check
+# ==========================================
+Open-Reg "Computer\HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Enum\USBSTOR"
+Open-Reg "Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Search\VolumeInfoCache"
+
+# ==========================================
+# web urls
+# ==========================================
+Open-URL "https://processhacker.sourceforge.io/nightly.php"
+Open-URL "https://www.nirsoft.net/utils/usb_devices_view.html"
+Open-URL "https://ring-1.io"
+Open-URL "https://lethalcheats.net"
+
+# ==========================================
+# PowerShell HC check
+# ==========================================
+$psHistory = "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine"
+Open-Path $psHistory
+
+# ==========================================
+# Additional Useful Checks
+# ==========================================
+
+# Temp files
+Open-Path "$env:TEMP"
+
+# Recent files
+Open-Path "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Recent"
+
+# Prefetch (execution traces)
+Open-Path "C:\Windows\Prefetch"
+
+# Event Viewer
+Write-Host "Opening Event Viewer" -ForegroundColor Yellow
+Start-Process "eventvwr.msc"
+
+# Task Manager
+Write-Host "Opening Task Manager" -ForegroundColor Yellow
+Start-Process "taskmgr.exe"
+
+# Services
+Write-Host "Opening Services" -ForegroundColor Yellow
+Start-Process "services.msc"
+
+# Startup Programs
+Write-Host "Opening Startup Folder" -ForegroundColor Yellow
+Open-Path "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+
+# System Info
+Write-Host "Opening System Information" -ForegroundColor Yellow
+Start-Process "msinfo32"
+
+# Network Connections
+Write-Host "Opening NCPA" -ForegroundColor Yellow
+Start-Process "ncpa.cpl"
+
+# ==========================================
+# Optional: List USB Devices via PowerShell
+# ==========================================
+Write-Host "Listing USB Devices:" -ForegroundColor Cyan
+Get-PnpDevice -Class USB | Format-Table -AutoSize
+
+# ==========================================
+# Optional: Running Processes Snapshot
+# ==========================================
+Write-Host "Listing Running Processes:" -ForegroundColor Cyan
+Get-Process | Sort-Object CPU -Descending | Select-Object -First 15 | Format-Table
+
+# ==========================================
+# Done
+# ==========================================
+Write-Host "Lain.wtf" -ForegroundColor Green
